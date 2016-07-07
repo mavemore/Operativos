@@ -42,7 +42,12 @@ public class TCPClient {
                 verificarPalabra(sentence);
                 
                 if(sentence.trim().compareTo("help") == 0){
-                    System.out.println("Comandos Soportados");
+                    System.out.println("Comandos Soportados: ");
+			System.out.println("Comando: get  parametros: llave descripción: Retorna el valor asociado a dicha clave.");
+			System.out.println("Comando: set  parametros: llave, valor descripción: Almacena la clave con el valor asociado.");
+			System.out.println("Comando: del  paramaetros: llave descripción: Elimina la clave, con su valor asociado.");
+			System.out.println("Comando: list  parametros: No descripción: Retorna la lista de todas las claves almacenadas.");
+			System.out.println("Comando: exit  parametros: No descripción: Termina la conexion con el servidor y posteriormente termina la ejecucion del programa cliente.");
                 }
                 else{
                     flag = false;
