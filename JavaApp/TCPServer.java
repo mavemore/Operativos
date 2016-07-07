@@ -1,82 +1,83 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 
-public class TCPServer {
-    private static TCPServer server; 
-    private ServerSocket serverSocket;
+public class TCPServer extends Thread{
+    public static HashMap storeValue = new HashMap();
+    protected Socket socket;
 
-    //maximo 10 hilos
-    private final ExecutorService executorService = Executors.newFixedThreadPool(10);        
-
-    public TCPServer(int port){
-        server.runServer(port);
+    public TCPServer(Socket clientSocket) {
+        this.socket = clientSocket;
     }
 
-    private void runServer(int port) {        
-        int serverPort = port;
+    public void run() {
+        InputStream inp = null;
+        BufferedReader brinp = null;
+        DataOutputStream out = null;
+        String comm;
+        String retornoUsuario="";
         try {
-            //inicia servidor
-            serverSocket = new ServerSocket(serverPort); 
-
-            while(true) {
-                //espera hasta que llegue request
-                try {
-                    Socket s = serverSocket.accept();
-                    //procesa request
-                    executorService.submit(new ServiceRequest(s));
-                } catch(IOException ioe) {
-                    System.out.println("ERROR: No se pudo establecer la conexión");
-                }
-            }
-        }catch(IOException e) {
-            System.out.println("ERROR: No se pudo inicar el servidor en el puerto "+serverPort);
-        }
-    }
-
-    //Call the method when you want to stop your server
-    private void stopServer() {
-        //Stop the executor service.
-        executorService.shutdownNow();
-        try {
-            //Stop accepting requests.
-            serverSocket.close();
+            inp = socket.getInputStream();
+            brinp = new BufferedReader(new InputStreamReader(inp));
+            out = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
-            System.out.println("ERROR: Ocurrió una falla al cerrar el servidor");
+            retornoUsuario = "ERROR: No se pudo leer el socket.";
+            return;
         }
-        System.exit(0);
-    }
-
-    class ServiceRequest implements Runnable {
-
-        private Socket socket;
-
-        public ServiceRequest(Socket connection) {
-            this.socket = connection;
-        }
-
-        @Override
-        public void run() {
-            String clientSentence;
-            String capitalizedSentence;
+        String line;
+        while (true) {
             try {
-                BufferedReader inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                DataOutputStream outToClient = new DataOutputStream(socket.getOutputStream());
-                clientSentence = inFromClient.readLine();
-                capitalizedSentence = clientSentence.toUpperCase() + '\n';
-                outToClient.writeBytes(capitalizedSentence);
-            } catch (IOException ex) {
-                    Logger.getLogger(TCPServer.class.getName()).log(Level.SEVERE, null, ex);
+                line = brinp.readLine();
+                comm = line.split(" ")[0];
+                if (line.equalsIgnoreCase("QUIT")) {
+                    socket.close();
+                    return;
+                } else {
+                    if(comm.toLowerCase().equals("get") && line.split(" ").length == 2){
+                        if(storeValue.containsKey(line.split(" ")[1])){
+                            retornoUsuario = "key="+storeValue.get(line.split(" ")[1]);
+                        }else{
+                            retornoUsuario = "key=";
+                        }
+                    }else if(comm.toLowerCase().equals("set") && line.split(" ").length == 3){
+                        storeValue.put(line.split(" ")[1],line.split(" ")[2]);
+                        retornoUsuario = "Ok";
+                    }else if(comm.toLowerCase().equals("del") && line.split(" ").length == 2){
+                        if(storeValue.containsKey(line.split(" ")[1])){
+                            storeValue.remove(line.split(" ")[1]);
+                            retornoUsuario = "Eliminado";
+                        }
+                    }else if(comm.toLowerCase().equals("list".toLowerCase()) && line.split(" ").length == 1){
+                        Collection c = storeValue.values();
+                        Iterator itr = c.iterator();
+                        String lista = new String();
+                        while (itr.hasNext()) {
+                            if(lista.isEmpty()){
+                                lista = ""+itr.next();
+                            }else{
+                                lista = lista + ", "+ itr.next();
+                            }
+                        }
+                        retornoUsuario = lista; 
+                    } else {
+                        retornoUsuario = "ERROR: Comando no valido";
+                    }
+                    out.writeBytes(retornoUsuario + "\n\r");
+                    out.flush();
                 }
-            try {
-                socket.close();
-            }catch(IOException ioe) {
-                System.out.println("ERROR: Ocurrió una falla en la conexion con el cliente");
+            } catch (IOException e) {
+                retornoUsuario = "ERROR: No se pudo leer la linea";
+                return;
             }
-        }        
+        }
     }
-}
+}    
+
+
 
