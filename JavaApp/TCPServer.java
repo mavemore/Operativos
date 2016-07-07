@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class TCPServer extends Thread{
-    public static HashMap storeValue = new HashMap();
+    //public static HashMap storeValue = new HashMap();
+    public static KeyValueMap storeValue = new KeyValueMap();
     protected Socket socket;
 
     public TCPServer(Socket clientSocket) {

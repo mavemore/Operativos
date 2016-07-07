@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplication18;
+
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,11 +16,17 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author Administrador
  */
 public class KeyValueMap<K, V> {
-    private HashMap<K, V> map = new HashMap<K, V>();
+    //private HashMap<K, V> map = new HashMap<K, V>();
+private HashMap<K, V> map;
     private ReadWriteLock rwl = new ReentrantReadWriteLock();
     private Lock rl = rwl.readLock();
     private Lock wl = rwl.writeLock();
 
+	public KeyValueMap(){
+		map = new HashMap<K, V>();
+	}
+	
+	
     public V get(Object k) {
         rl.lock();
         try {
@@ -55,6 +61,15 @@ public class KeyValueMap<K, V> {
             rl.unlock();
         }
     }
+	
+	public boolean containsKey(Object k){
+		 rl.lock();
+		try {
+		    return map.containsKey(k);
+		} finally {
+		    rl.unlock();
+		}	
+	}
     
 }
 
