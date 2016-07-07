@@ -28,12 +28,13 @@ public class KeyValueStore {
         while (true) {
             try {
                 socket = serverSocket.accept();
+                // new threa for a client
+                new TCPServer(socket).start();
             } catch (IOException e) {
                 System.out.println("ERROR: No pudo establecer la conexion con el cliente.");
                 return;
             }
-            // new threa for a client
-            new TCPServer(socket).start();
+            
         }
     }
 }

@@ -1,4 +1,5 @@
 import java.io.*;
+import static java.lang.Integer.parseInt;
 import java.net.*;
 
 public class TCPClient {
@@ -8,9 +9,30 @@ public class TCPClient {
 	Boolean flag = true;
         BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 
-        Socket clientSocket = new Socket("localhost", 6789);
-        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        try{
+            String puerto = argv[0];
+            if(!puerto.matches("[0-9]+") && puerto.length() < 5){
+                System.out.println("ERROR: argumento puerto no valido.");
+                return;
+            }
+        }catch(Exception e){
+            System.out.println("ERROR: argumento puerto no valido.");
+            return;
+        }
+		try{
+            String ip = argv[0];
+            if(!(ip.matches("[0-9.]+") || ip.toLowerCase().equals("localhost"))){
+                System.out.println("ERROR: argumento ip no valido.");
+                return;
+            }
+        }catch(Exception e){
+            System.out.println("ERROR: argumento ip no valido.");
+            return;
+        }
+        try {
+            Socket clientSocket = new Socket(argv[0], parseInt(argv[1]));
+            DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+             BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 	
 	while(flag){
             System.out.println("Ingresar comando: ");
@@ -42,7 +64,12 @@ public class TCPClient {
             modifiedSentence = inFromServer.readLine();
             System.out.println(modifiedSentence);
             clientSocket.close();
-        }  
+        } 
+        } catch (Exception e) {
+            System.out.println("ERROR: Problemas al abrir el socket.");
+            return;
+
+        }
     }
     public static void verificarPalabra(String word) throws Error {
         

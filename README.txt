@@ -1,6 +1,12 @@
-Primero debe realizar las instrucciones del SERVIDOR y luego las del CLIENTE.
+----------------------------------
+          INSTRUCCIONES
+----------------------------------
+-Primero debe realizar las instrucciones del SERVIDOR y luego las del CLIENTE.
+-El puerto debe ser el mismo en servidor y cliente.
 
-SERVIDOR:
+------------------
+    SERVIDOR
+------------------
 
 1. Abra la línea de comando en la carpeta JavaApp.
 2. Escriba por la línea de comando: java KeyValueStore 
@@ -10,7 +16,9 @@ SERVIDOR:
 3. Ahora el servidor se encuentra escuchando al puerto.
 
 
-CLIENTE:
+------------------
+    CLIENTE
+------------------
 
 1. Abra la línea de comando en la carpeta JavaApp.
 2. Escriba por la línea de comando: java TCPClient ip 

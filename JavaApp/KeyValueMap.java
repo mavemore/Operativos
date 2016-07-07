@@ -1,23 +1,21 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 /**
  *
- * @author Administrador
+ * @author colorless
  */
 public class KeyValueMap<K, V> {
     //private HashMap<K, V> map = new HashMap<K, V>();
-private HashMap<K, V> map;
+    private HashMap<K, V> map;
     private ReadWriteLock rwl = new ReentrantReadWriteLock();
     private Lock rl = rwl.readLock();
     private Lock wl = rwl.writeLock();
@@ -53,10 +51,10 @@ private HashMap<K, V> map;
             wl.unlock();
         }
     }
-    public Collection<V> values() {
+    public Collection<K> keys() {
         rl.lock();
         try {
-            return map.values();
+            return map.keySet();
         } finally {
             rl.unlock();
         }
@@ -70,6 +68,4 @@ private HashMap<K, V> map;
 		    rl.unlock();
 		}	
 	}
-    
 }
-

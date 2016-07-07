@@ -5,12 +5,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 
 public class TCPServer extends Thread{
-    //public static HashMap storeValue = new HashMap();
-    public static KeyValueMap storeValue = new KeyValueMap();
+    public static KeyValueMap storeValue = new KeyValueMap();;
     protected Socket socket;
 
     public TCPServer(Socket clientSocket) {
@@ -55,7 +53,7 @@ public class TCPServer extends Thread{
                             retornoUsuario = "Eliminado";
                         }
                     }else if(comm.toLowerCase().equals("list".toLowerCase()) && line.split(" ").length == 1){
-                        Collection c = storeValue.values();
+                        Collection c = storeValue.keys();
                         Iterator itr = c.iterator();
                         String lista = new String();
                         while (itr.hasNext()) {
